@@ -9,20 +9,20 @@ Privacy-first personal distraction protection, website locking, dedicated word b
 1. **Permanent Website Protection**: Blocks entire website domains (`9xmovies.cologne/*`) at Priority 7,000 using native Declarative Net Request (DNR) rules.
 2. **Dedicated "Block by Word" System**:
    - **Type 1 — Website Block**: Protects entire domains.
-   - **Type 2 — Domain-Specific Word Rule**: `9xmovies.cologne` + `feelapp` blocks ONLY URLs containing `feelapp` in path/query (`/?s=feelapp`, `/watch/feelapp`), leaving root `/` and non-matching paths accessible.
-   - **Type 3 — Global Word Rule**: `ullu` protects matching query URLs across any host without creating a domain block on any website.
+   - **Type 2 — Domain-Specific Word Rule**: `9xmovies.cologne` + `app` blocks ONLY URLs containing `lapp` in path/query (`/?s=app`, `/watch/app`), leaving root `/` and non-matching paths accessible.
+   - **Type 3 — Global Word Rule**: `word` protects matching query URLs across any host without creating a domain block on any website.
 3. **Word Match Targets & Boundary Modes**:
    - Match Targets: `Path + Query`, `Hostname`, `Full URL`.
-   - Word Modes: `Contains` (substring) vs `Whole Word` (bounded word match avoiding partial word false positives like `feelapp` vs `feelapplication`).
-   - Case Handling: Default case-insensitive matching (`FEELAPP`, `feelapp`, `FeelApp`).
+   - Word Modes: `Contains` (substring) vs `Whole Word` (bounded word match avoiding partial word false positives like `app` vs `application`).
+   - Case Handling: Default case-insensitive matching (`APP`, `lapp`, `lApp`).
 4. **Bundled Adult Content Shield**:
    - Bundles 79 adult seed domains in `src/data/adult_domains.json`.
    - Hidden from the normal UI: exposed only as a simple `Adult Content [ ON / OFF ]` toggle.
    - Loaded and normalized programmatically on installation/startup.
-   - Enforces strict hostname boundary matching (blocks `pornhub.com`, `www.pornhub.com`, `m.pornhub.com`, `pornhub.com/video/123`, but NOT lookalikes like `notpornhub.com` or `pornhub.com.evil.com`).
+   - Enforces strict hostname boundary matching (blocks `xyz.com`, `www.zyzhub.com`, `m.zyzhub.com`, `zyzhub.com/video/123`, but NOT lookalikes like `notzyzhub.com` or `zyzhub.com.evil.com`).
 5. **Local Offline Blocked Page**:
    - Displays a calm, distraction-free local blocked screen (`src/ui/blocked.html`).
-   - Safely parses and renders exact reasons (`Reason: Protected Word` and `Word: "feelapp"`) using DOM-safe `textContent`. Zero external server requests.
+   - Safely parses and renders exact reasons (`Reason: Protected Word` and `Word: "app"`) using DOM-safe `textContent`. Zero external server requests.
 6. **Search Engine SafeSearch Enforcement**: Native query transformation forcing SafeSearch on Google, Bing, and DuckDuckGo.
 7. **SPA Navigation Protection**: Client-side History API (`pushState`/`replaceState`/`popstate`) interception for single-page applications.
 
