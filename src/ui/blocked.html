@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Access Blocked | Focus Shield</title>
+  <link rel="stylesheet" href="blocked.css">
+</head>
+<body>
+  <div class="blocked-card">
+    <div class="icon-container">
+      <svg class="shield-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+    </div>
+    
+    <h1 class="title">Access Restricted</h1>
+    
+    <div class="reason-badge" id="block-reason-badge">
+      <span id="block-reason-text">Protected Content Intercepted</span>
+    </div>
+
+    <p class="subtitle">
+      This page was blocked according to your Focus & Content Shield protection policy.
+    </p>
+
+    <div class="advice-box">
+      <p class="advice-text" id="motivational-quote">
+        "Focus is a muscle. Every time you turn away from a distraction, you build mental strength."
+      </p>
+    </div>
+
+    <div id="timer-box" class="timer-box hidden">
+      <span class="timer-label">Focus Session Lock Remaining:</span>
+      <span id="timer-display" class="timer-display">00:00</span>
+    </div>
+
+    <div class="action-row">
+      <button id="back-safety-btn" class="btn primary-btn">Back to Safety</button>
+      <button id="close-tab-btn" class="btn secondary-btn">Close This Tab</button>
+      <button id="go-dashboard-btn" class="btn outline-btn">View Shield Dashboard</button>
+    </div>
+
+    <div class="footer-note">
+      Focus Shield &bull; Privacy-First Local Protection
+    </div>
+  </div>
+
+  <script type="module" src="blocked.js"></script>
+</body>
+</html>

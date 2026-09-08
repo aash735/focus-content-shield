@@ -1,0 +1,10 @@
+{
+  "extension_name": {
+    "message": "Focus & Content Shield",
+    "description": "Name of the extension"
+  },
+  "extension_description": {
+    "message": "Privacy-first personal distraction and adult-content protection for study and focus.",
+    "description": "Description of the extension"
+  }
+}

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus & Content Shield Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <svg class="brand-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <div class="brand-text">
+          <h1>Focus & Content Shield</h1>
+          <span class="version-tag">v2.0.0 &bull; Local & Private</span>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="status-badge" id="strict-status-badge">
+          <span id="strict-badge-text">Normal Mode</span>
+        </div>
+        <div class="status-badge active" id="protection-status-badge">
+          <span class="pulse-dot"></span>
+          <span id="status-badge-text">Shield Active</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="tab-overview">Overview</button>
+      <button class="nav-tab" data-tab="tab-blocklists">Rules & Categories</button>
+      <button class="nav-tab" data-tab="tab-schedules">Schedules</button>
+      <button class="nav-tab" data-tab="tab-focus">Focus Mode</button>
+      <button class="nav-tab" data-tab="tab-security">Strict Mode & PIN</button>
+      <button class="nav-tab" data-tab="tab-insights">Insights</button>
+      <button class="nav-tab" data-tab="tab-settings">Import / Export</button>
+    </nav>
+
+    <!-- Incognito Warning Banner -->
+    <div id="incognito-warning-banner" class="alert-banner warning-banner hidden">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-content">
+        <strong>Action Required: Enable Incognito Protection</strong>
+        <p>To prevent bypass via private browsing windows, open <code>chrome://extensions</code> or <code>edge://extensions</code>, find Focus Shield, and enable <strong>"Allow in Incognito"</strong>.</p>
+      </div>
+    </div>
+
+    <!-- TAB 1: OVERVIEW -->
+    <main id="tab-overview" class="tab-content active">
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-value" id="metric-domains-count">0</div>
+          <div class="metric-label">Protected Domains</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="metric-keywords-count">0</div>
+          <div class="metric-label">Protected Keywords</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="metric-blocked-count">0</div>
+          <div class="metric-label">Interceptions Counter</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="metric-focus-timer">Inactive</div>
+          <div class="metric-label">Focus Session</div>
+        </div>
+      </section>
+
+      <div class="main-grid">
+        <div class="grid-column">
+          <!-- Option A: Block Website -->
+          <section class="card">
+            <h2 class="card-title">Option A — Block Website</h2>
+            <p class="card-desc">Protect an entire website domain (e.g. <code>distracting-site.com</code>). Subdomains are covered automatically.</p>
+            <form id="quick-add-domain-form" class="form">
+              <div class="form-group">
+                <input type="text" id="quick-domain-input" placeholder="e.g. example.com" required autocomplete="off" spellcheck="false">
+              </div>
+              <button type="submit" class="btn primary-btn">Block Website</button>
+              <div id="quick-domain-feedback" class="feedback-msg"></div>
+            </form>
+          </section>
+
+          <!-- Option B & C: Block by Word -->
+          <section class="card">
+            <h2 class="card-title">Option B & C — Block by Word</h2>
+            <p class="card-desc">Intercept URLs matching specific words without blocking entire domains.</p>
+            <form id="quick-add-keyword-form" class="form">
+              <div class="form-group">
+                <label>Website Domain (Optional for Global)</label>
+                <input type="text" id="quick-kw-domain" placeholder="e.g. 9xmovies.cologne (leave blank for global)" autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label>Word / Pattern</label>
+                <input type="text" id="quick-kw-pattern" placeholder="e.g. feelapp or ullu" required autocomplete="off">
+              </div>
+              <div class="form-row">
+                <div class="form-group half">
+                  <label>Match Target</label>
+                  <select id="quick-kw-scope">
+                    <option value="path_query" selected>Path + Query</option>
+                    <option value="hostname">Hostname</option>
+                    <option value="full_url">Full URL</option>
+                  </select>
+                </div>
+                <div class="form-group half">
+                  <label>Word Mode</label>
+                  <select id="quick-kw-mode">
+                    <option value="contains" selected>Contains</option>
+                    <option value="whole_word">Whole Word</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Action</label>
+                <select id="quick-kw-action">
+                  <option value="block_page" selected>Block (Show Block Page)</option>
+                  <option value="redirect_safe_home">Redirect to Safe Homepage</option>
+                </select>
+              </div>
+              <button type="submit" class="btn primary-btn">Add Word Rule</button>
+              <div id="quick-kw-feedback" class="feedback-msg"></div>
+            </form>
+          </section>
+        </div>
+
+        <div class="grid-column">
+          <!-- Active Focus Widget -->
+          <section class="card">
+            <h2 class="card-title">Quick Focus Session</h2>
+            <div id="overview-focus-widget">
+              <p class="card-desc">Start an immediate distraction-free focus window.</p>
+              <div class="focus-preset-btns">
+                <button class="btn focus-start-btn" data-duration="25">25 Min</button>
+                <button class="btn focus-start-btn" data-duration="50">50 Min</button>
+                <button class="btn focus-start-btn" data-duration="90">90 Min</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- System Status -->
+          <section class="card">
+            <h2 class="card-title">Protection System Status</h2>
+            <div class="status-info-row">
+              <span class="status-label">Search Engine SafeSearch:</span>
+              <span class="status-active-badge">Enforced (Google, Bing, DDG)</span>
+            </div>
+            <div class="status-info-row">
+              <span class="status-label">Adult Content Shield:</span>
+              <span class="status-active-badge" id="adult-status-text">Active</span>
+            </div>
+            <div class="status-info-row">
+              <span class="status-label">Local Rule Engine:</span>
+              <span class="status-active-badge" id="dnr-status-text">Verified</span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- TAB 2: RULES & CATEGORIES -->
+    <main id="tab-blocklists" class="tab-content">
+      <section class="card mb-1rem">
+        <h2 class="card-title">Managed Content Categories</h2>
+        <p class="card-desc">Enable or disable entire managed category rulesets.</p>
+        <div id="categories-grid" class="categories-grid">
+          <!-- Dynamically Rendered Category Cards -->
+        </div>
+      </section>
+
+      <div class="main-grid">
+        <div class="grid-column">
+          <section class="card">
+            <h2 class="card-title">Protected Domains Registry</h2>
+            <div id="domains-list-container" class="rules-list">
+              <!-- Rendered domains -->
+            </div>
+          </section>
+        </div>
+        <div class="grid-column">
+          <section class="card">
+            <h2 class="card-title">Protected Keywords Registry</h2>
+            <div id="keywords-list-container" class="rules-list">
+              <!-- Rendered keywords -->
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- TAB 3: SCHEDULES -->
+    <main id="tab-schedules" class="tab-content">
+      <div class="main-grid">
+        <div class="grid-column">
+          <section class="card">
+            <h2 class="card-title">Create Recurring Schedule</h2>
+            <form id="create-schedule-form" class="form">
+              <div class="form-group">
+                <label>Schedule Name</label>
+                <input type="text" id="sched-name" placeholder="e.g. Work Hours" required autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label>Days of Week</label>
+                <div class="day-picker">
+                  <label><input type="checkbox" value="1" checked> Mon</label>
+                  <label><input type="checkbox" value="2" checked> Tue</label>
+                  <label><input type="checkbox" value="3" checked> Wed</label>
+                  <label><input type="checkbox" value="4" checked> Thu</label>
+                  <label><input type="checkbox" value="5" checked> Fri</label>
+                  <label><input type="checkbox" value="6"> Sat</label>
+                  <label><input type="checkbox" value="0"> Sun</label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group half">
+                  <label>Start Time</label>
+                  <input type="time" id="sched-start-time" value="09:00" required>
+                </div>
+                <div class="form-group half">
+                  <label>End Time</label>
+                  <input type="time" id="sched-end-time" value="17:00" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Categories to Block</label>
+                <div class="category-checkboxes">
+                  <label><input type="checkbox" value="social" checked> Social Media</label>
+                  <label><input type="checkbox" value="entertainment" checked> Entertainment</label>
+                  <label><input type="checkbox" value="gaming" checked> Gaming</label>
+                  <label><input type="checkbox" value="gambling" checked> Gambling</label>
+                  <label><input type="checkbox" value="shopping"> Shopping</label>
+                  <label><input type="checkbox" value="news"> News</label>
+                  <label><input type="checkbox" value="video"> Video</label>
+                  <label><input type="checkbox" value="adult" checked> Adult</label>
+                </div>
+              </div>
+              <button type="submit" class="btn primary-btn">Save Schedule</button>
+              <div id="sched-feedback" class="feedback-msg"></div>
+            </form>
+          </section>
+        </div>
+
+        <div class="grid-column">
+          <section class="card">
+            <h2 class="card-title">Active Schedules</h2>
+            <div id="schedules-list-container" class="rules-list">
+              <!-- Rendered Schedules -->
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- TAB 4: FOCUS MODE -->
+    <main id="tab-focus" class="tab-content">
+      <section class="card focus-hero-card">
+        <h2 class="card-title">Focus Mode</h2>
+        <p class="card-desc">Lock yourself into deep work. Timer persists across popup closure.</p>
+
+        <div id="focus-display-box" class="focus-display-box">
+          <div id="focus-timer-text" class="focus-timer-big">25:00</div>
+          <div id="focus-status-text" class="focus-status-sub">Ready to focus</div>
+        </div>
+
+        <div id="focus-controls-active" class="focus-controls hidden">
+          <button id="stop-focus-btn" class="btn danger-btn">Stop Focus Session</button>
+        </div>
+
+        <div id="focus-controls-setup" class="focus-controls">
+          <div class="form-group">
+            <label>Select Duration</label>
+            <div class="focus-duration-selector">
+              <button class="btn focus-dur-btn active" data-mins="25">25 Min</button>
+              <button class="btn focus-dur-btn" data-mins="50">50 Min</button>
+              <button class="btn focus-dur-btn" data-mins="90">90 Min</button>
+              <input type="number" id="custom-focus-mins" placeholder="Custom" min="1" max="1440" style="width: 90px;">
+            </div>
+          </div>
+          <div class="form-group">
+            <label><input type="checkbox" id="focus-strict-lock"> Lock Session (Require PIN to cancel early)</label>
+          </div>
+          <button id="start-focus-btn" class="btn primary-btn btn-large">Start Focus Session</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- TAB 5: STRICT MODE & PIN -->
+    <main id="tab-security" class="tab-content">
+      <div class="main-grid">
+        <div class="grid-column">
+          <!-- Security PIN Card -->
+          <section class="card">
+            <h2 class="card-title">Security PIN Protection</h2>
+            <p class="card-desc">Require authentication before disabling protection, removing rules, or changing settings.</p>
+            <div id="pin-status-box" class="pin-status-box mb-1rem">
+              Status: <strong id="pin-status-label">Disabled</strong>
+            </div>
+
+            <form id="set-pin-form" class="form">
+              <div class="form-group hidden" id="current-pin-group">
+                <label>Current PIN</label>
+                <input type="password" id="current-pin-input" maxlength="12" autocomplete="off">
+              </div>
+              <div class="form-group">
+                <label>New PIN / Password</label>
+                <input type="password" id="new-pin-input" required maxlength="12" autocomplete="off" placeholder="4-12 digits">
+              </div>
+              <button type="submit" class="btn primary-btn" id="set-pin-btn">Set Security PIN</button>
+              <button type="button" class="btn danger-btn hidden" id="remove-pin-btn">Remove PIN</button>
+              <div id="pin-feedback" class="feedback-msg"></div>
+            </form>
+          </section>
+        </div>
+
+        <div class="grid-column">
+          <!-- Strict Lockdown Card -->
+          <section class="card">
+            <h2 class="card-title">Strict Lockdown Mode</h2>
+            <p class="card-desc">Prevents impulsive rule deletions and settings modifications during a lock period.</p>
+            <div class="notice-box mb-1rem">
+              🔒 <strong>Resists Impulsive Bypass:</strong> Changes to blocklists and settings are disabled while Strict Mode is active.
+            </div>
+
+            <form id="strict-mode-form" class="form">
+              <div class="form-group">
+                <label>Lock Duration</label>
+                <select id="strict-duration-select">
+                  <option value="0">Indefinite (Requires PIN to disable)</option>
+                  <option value="1">1 Hour Lock</option>
+                  <option value="4">4 Hours Lock</option>
+                  <option value="8">8 Hours Lock</option>
+                  <option value="24">24 Hours Lock</option>
+                </select>
+              </div>
+              <button type="submit" class="btn primary-btn" id="toggle-strict-btn">Enable Strict Lockdown</button>
+              <div id="strict-feedback" class="feedback-msg"></div>
+            </form>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- TAB 6: INSIGHTS -->
+    <main id="tab-insights" class="tab-content">
+      <section class="card mb-1rem">
+        <div class="flex-between">
+          <div>
+            <h2 class="card-title">Local Interception Insights</h2>
+            <p class="card-desc">Privacy-first metrics stored locally on your device.</p>
+          </div>
+          <button id="clear-insights-btn" class="btn secondary-btn">Clear Insights</button>
+        </div>
+
+        <div class="metrics-grid mt-1rem">
+          <div class="metric-card">
+            <div class="metric-value" id="insights-total-count">0</div>
+            <div class="metric-label">Total Distractions Blocked</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value" id="insights-top-domain">None</div>
+            <div class="metric-label">Most Blocked Host</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Top Intercepted Domains</h2>
+        <div id="insights-domain-breakdown" class="rules-list">
+          <!-- Rendered domain block frequency -->
+        </div>
+      </section>
+    </main>
+
+    <!-- TAB 7: IMPORT / EXPORT -->
+    <main id="tab-settings" class="tab-content">
+      <div class="main-grid">
+        <div class="grid-column">
+          <section class="card">
+            <h2 class="card-title">Export Backup</h2>
+            <p class="card-desc">Export your blocklists, categories, and schedules to a local JSON file. Security PIN hashes are never exported.</p>
+            <button id="export-json-btn" class="btn primary-btn">Download Backup JSON</button>
+          </section>
+        </div>
+
+        <div class="grid-column">
+          <section class="card">
+            <h2 class="card-title">Import Backup</h2>
+            <p class="card-desc">Restore or merge configuration from a local JSON backup file.</p>
+            <div class="form-group">
+              <input type="file" id="import-file-input" accept=".json">
+            </div>
+            <button id="import-json-btn" class="btn secondary-btn">Import File</button>
+            <div id="import-feedback" class="feedback-msg"></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- PIN Prompt Modal -->
+  <div id="pin-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h3 class="modal-title">Security Authentication</h3>
+      <p class="modal-desc">Enter your PIN to authorize this action.</p>
+      <input type="password" id="modal-pin-input" placeholder="Enter PIN" maxlength="12" autocomplete="off">
+      <div id="modal-pin-feedback" class="feedback-msg"></div>
+      <div class="modal-actions">
+        <button id="modal-cancel-btn" class="btn secondary-btn">Cancel</button>
+        <button id="modal-submit-btn" class="btn primary-btn">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="dashboard.js"></script>
+</body>
+</html>

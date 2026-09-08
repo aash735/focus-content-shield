@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Production / Build Output
+dist/
+build/
+coverage/
+
+# Environment and Secrets
+.env
+.env.*
+*.log
+
+# Operating System & IDE metadata
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,9 @@
+{
+  "name": "focus-and-content-shield-extension",
+  "version": "1.0.0",
+  "description": "Privacy-first personal distraction and adult-content protection browser extension.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  }
+}
